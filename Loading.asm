@@ -2,16 +2,16 @@ INCLUDE Irvine32.inc
 TITLE Loading
 
 .data
-maxX BYTE ?					; Maximun size with respect to X
-maxY BYTE ?					; Maximun size with respect to Y
-CenterX BYTE ?				; Center with respect to X
-CenterY BYTE ?				; Center with respect to Y
-two BYTE 2					; Just a variable to divide register(s)/vaiable(s) without disturbing other registers
-LoadingScreenDelay DWORD 100d				; Delay for loading screen
-LoadingScreenText01 BYTE "Collecting Data",0
-LoadingScreenText02 BYTE "Organizing List(s)",0
-LoadingScreenText03 BYTE "Finalizing Objects",0
-LoadingScreenText04 BYTE "The bits are flowing slowly today",0
+maxX BYTE ?												; Maximun size with respect to X
+maxY BYTE ?												; Maximun size with respect to Y
+CenterX BYTE ?											; Center with respect to X
+CenterY BYTE ?											; Center with respect to Y
+two BYTE 2												; Just a variable to divide register(s)/vaiable(s) without disturbing other registers
+LoadingScreenText01 BYTE "Have you lost weight?",0
+LoadingScreenText02 BYTE "Life was supposed to be great ......",0
+LoadingScreenText03 BYTE "Warning: Don't set yourself on fire",0
+LoadingScreenText04 BYTE "Would you prefer chicken, steak, or tofu?",0
+LoadingScreenText05 BYTE "Don't you think that he bits are flowing slowly today ?",0
 						
 .code
 main PROC
@@ -51,10 +51,8 @@ LoadingScreen PROC
 	;RETURN:	?
 	;***********************
 	
-	;call Clrscr
 	mov ecx, 0
 	.WHILE(ecx <= 100)
-		
 		mov dh, CenterY
 		mov dl, CenterX
 		call GotoXY
@@ -62,24 +60,61 @@ LoadingScreen PROC
 		call WriteDec
 		mov eax, '%'
 		call WriteChar
-		
-		add dh, 1
-		sub dl, 7
-		call GotoXY
-
-		mov eax, 80
-
+	
 		.IF(ecx <= 20)
-			mov edx, OFFSET LoadingScreenText01 
-		.ELSEIF(ecx <= 70)
-			mov edx, OFFSET LoadingScreenText02 
-		.ELSEIF(ecx <=93)
-			mov edx, OFFSET LoadingScreenText03 
-		.ELSE
-			;add dh, 1
-			sub dl, 7
+			mov eax, LENGTHOF LoadingScreenText01
+			sub eax, 1
+			SHR eax, 1
+			mov dh, CenterY
+			mov dl, CenterX
+			add dh, 1
+			sub dl, al
 			call GotoXY
-			mov edx, OFFSET LoadingScreenText04; 
+			mov edx, OFFSET LoadingScreenText01 
+			mov eax, 80
+		.ELSEIF(ecx <= 50)
+			mov eax, LENGTHOF LoadingScreenText02
+			sub eax, 1
+			SHR eax, 1
+			mov dh, CenterY
+			mov dl, CenterX
+			add dh, 1
+			sub dl, al
+			call GotoXY
+			mov edx, OFFSET LoadingScreenText02
+			mov eax, 90
+		.ELSEIF(ecx <=70)
+			mov eax, LENGTHOF LoadingScreenText03
+			sub eax, 1
+			SHR eax, 1
+			mov dh, CenterY
+			mov dl, CenterX
+			add dh, 1
+			sub dl, al
+			call GotoXY
+			mov edx, OFFSET LoadingScreenText03
+			mov eax, 180
+		.ELSEIF(ecx <=93)
+			mov eax, LENGTHOF LoadingScreenText04
+			sub eax, 1
+			SHR eax, 1
+			mov dh, CenterY
+			mov dl, CenterX
+			add dh, 1
+			sub dl, al
+			call GotoXY
+			mov edx, OFFSET LoadingScreenText04
+			mov eax, 150
+		.ELSE
+			mov eax, LENGTHOF LoadingScreenText05
+			sub eax, 1
+			SHR eax, 1
+			mov dh, CenterY
+			mov dl, CenterX
+			add dh, 1
+			sub dl, al
+			call GotoXY
+			mov edx, OFFSET LoadingScreenText05
 			mov eax, 500
 		.ENDIF
 		call WriteString
