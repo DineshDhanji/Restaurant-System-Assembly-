@@ -7,6 +7,7 @@ maxY BYTE ?												; Maximun size with respect to Y
 CenterX BYTE ?											; Center with respect to X
 CenterY BYTE ?											; Center with respect to Y
 two BYTE 2												; Just a variable to divide register(s)/vaiable(s) without disturbing other registers
+LoadingScreenBar BYTE "___",0
 LoadingScreenText01 BYTE "Have you lost weight?",0
 LoadingScreenText02 BYTE "Life was supposed to be great ......",0
 LoadingScreenText03 BYTE "Warning: Don't set yourself on fire",0
@@ -53,6 +54,67 @@ LoadingScreen PROC
 	
 	mov ecx, 0
 	.WHILE(ecx <= 100)
+		mov dh, CenterY
+		mov dl, CenterX
+		sub dh, 2
+		.IF (ecx == 0)
+			sub dl , 15
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 10)
+			sub dl , 12
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 20)
+			sub dl , 9
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 30)
+			sub dl , 6
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 40)
+			sub dl , 3
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 50)
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 60)
+			add dl , 3
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 70)
+			add dl , 6
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 80)
+			add dl , 9
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 90)
+			add dl , 12
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 100)
+			add dl , 15
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ENDIF
+		
+
+
 		mov dh, CenterY
 		mov dl, CenterX
 		call GotoXY
