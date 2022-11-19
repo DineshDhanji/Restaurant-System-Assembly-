@@ -10,7 +10,7 @@ two BYTE 2												; Just a variable to divide register(s)/vaiable(s) without
 LoadingScreenBar BYTE "___",0
 LoadingScreenText01 BYTE "Have you lost weight?",0
 LoadingScreenText02 BYTE "Life was supposed to be great ......",0
-LoadingScreenText03 BYTE "Warning: Don't set yourself on fire",0
+LoadingScreenText03 BYTE " Warning: Don't set yourself on fire",0
 LoadingScreenText04 BYTE "Would you prefer chicken, steak, or tofu?",0
 LoadingScreenText05 BYTE "Don't you think that he bits are flowing slowly today ?",0
 						
