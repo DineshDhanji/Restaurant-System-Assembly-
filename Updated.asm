@@ -4,6 +4,20 @@ BUFFER_SIZE = 5000
 TotalItems = 24
 
 .data
+maxX BYTE ?												; Maximun size with respect to X
+maxY BYTE ?												; Maximun size with respect to Y
+CenterX BYTE ?											; Center with respect to X
+CenterY BYTE ?											; Center with respect to Y
+two BYTE 2												; Just a variable to divide register(s)/vaiable(s) without disturbing other registers
+LoadingScreenBar BYTE "___",0
+LoadingScreenText01 BYTE "Have you lost weight?",0
+LoadingScreenText02 BYTE "Life was supposed to be great ......",0
+LoadingScreenText03 BYTE " Warning: Don't set yourself on fire",0
+LoadingScreenText04 BYTE "Would you prefer chicken, steak, or tofu?",0
+LoadingScreenText05 BYTE "Don't you think that the bits are flowing slowly today ?",0
+
+
+
 buffer BYTE BUFFER_SIZE DUP(?)
 filename BYTE "menu.txt", 0
 fileHandle HANDLE ?
@@ -46,6 +60,7 @@ str2 BYTE "Enter Item Number to place your order: ", 0
 str3 BYTE "		Total Bill:		", 0
 str4 BYTE "			BILL DETAIL", 0
 str5 BYTE "Enter quantity: ",0
+str6 BYTE "ID     ITEM     PRICE     QTY",0
 space BYTE "     ", 0
 
 Order SWORD TotalItems DUP(-1)
@@ -61,6 +76,7 @@ exit
 main ENDP
 
 GetOrder PROC
+;Local variables to store input's cursor positions
 LOCAL i_row : BYTE
 LOCAL i_col : BYTE
 
@@ -77,6 +93,7 @@ LOCAL i_col : BYTE
 	mov dl, col
 	call Gotoxy
 
+	;Printing dashes for design
 	mov esi, 0
 	mov ecx, 52
 	PrintingDash:
@@ -85,10 +102,6 @@ LOCAL i_col : BYTE
 	loop PrintingDash
 
 	inc row
-
-
-
-
 
 	mov dh, row
 	mov dl, col
@@ -102,7 +115,8 @@ LOCAL i_col : BYTE
 	call Gotoxy
 	mov edx, OFFSET str2
 	call WriteString
-
+	
+	;Storing input's cursor positions in local variables
 	mov al, row
 	mov i_row, al
 	add col, 39
@@ -110,20 +124,37 @@ LOCAL i_col : BYTE
 	mov i_col, dl
 	sub col, 39
 
+	
+	inc row
+	inc row
+	inc row
+	mov dh, row
+	mov dl, col
+	call Gotoxy
+	mov edx, OFFSET str6
+	call WriteString
+
+	
+
 	mov esi, 0
 	add row, 1
+	;Condition for invalid inputs
 	BreakkButUp:
 	mov ax, 1
 	.WHILE(ax != -1 && ax != 0 && ax < 25)
+		;Moving cursor to the input position
 		mov dh, i_row
 		mov dl, i_col
 		call gotoxy
 		call ReadInt
+		;Checking for printing bill
 		.IF(eax == -1)
+			call GeneratingBill
 			jmp BreakMeDown
 		.ELSEIF(eax == 0 || eax > 24)
 			jmp BreakkButUp
 		.ENDIF
+		;Input for taking item's ID
 		mov Order[esi * TYPE WORD], ax
 		
 		inc i_row
@@ -136,21 +167,24 @@ LOCAL i_col : BYTE
 		.IF(eax == 0)
 			mov eax, 1
 		.ENDIF
+
+		;Input for taking item's quantity
 		mov Quantity[esi * TYPE WORD], ax
 		dec i_row
-		mov ax, Quantity[esi * TYPE WORD]
-
 
 		add row,1
 		mov dh, row
 		mov dl, col
 		call Gotoxy
+
+		; Printing items' id and then space.
 		movzx eax, Order[esi * TYPE WORD]
 		call WriteDec
 		mov edx, OFFSET space
 		call WriteString
 
 
+		; Printing items' name and then space.
 		movzx eax, Order[esi * TYPE WORD]
 		dec eax
 		mov edx, items[eax* TYPE DWORD]
@@ -159,6 +193,7 @@ LOCAL i_col : BYTE
 		call WriteString
 		
 		
+		; Printing items' price and then space.
 		movzx eax, Order[esi * TYPE WORD]
 		dec eax
 		mov eax, price[eax* TYPE DWORD]
@@ -166,6 +201,7 @@ LOCAL i_col : BYTE
 		mov edx, OFFSET space
 		call WriteString
 
+		; Printing items' quantity and then space.
 		movzx eax, Quantity[esi * TYPE WORD]
 		call WriteDec
 		mov edx, OFFSET space
@@ -178,6 +214,21 @@ LOCAL i_col : BYTE
 	ret
 GetOrder ENDP
 
+GeneratingBill PROC
+	call ReadMyScreenDetails
+	call clrscr
+	call LoadingScreen
+	call clrscr
+	call PrintBill
+	ret
+GeneratingBill ENDP
+
+PrintBill PROC
+	
+	ret
+PrintBill ENDP
+
+;Printing Menu
 PrintMenu PROC
 	pushad
 	mov edx,OFFSET filename
@@ -200,7 +251,6 @@ PrintMenu PROC
 	ret
 PrintMenu ENDP
 
-
 ; Move the cursor at the end of the screen. 
 RemoveEndingLines PROC
 	mov dh, 44
@@ -208,5 +258,172 @@ RemoveEndingLines PROC
 	call Gotoxy
 	ret
 RemoveEndingLines ENDP
+
+
+ReadMyScreenDetails PROC
+	;***********************
+	; NOTES
+	; MAX X = 120d or 78h & MAX Y = 29d or 1Dh
+	;***********************
+
+	;Getting max screen size & center of the screen
+		mov dh, 1Dh		; Should be obtained from GetMaxXY
+		mov dl, 78h		; Should be obtained from GetMaxXY
+
+	;Saving max sizes of X & Y
+		mov maxX, dl
+		mov maxY, dh
+
+	;Saving the center values into vaiables
+		movzx ax, maxX
+		div two
+		mov CenterX, al
+		movzx ax, maxY
+		div two
+		mov CenterY, al
+	ret
+ReadMyScreenDetails ENDP
+
+LoadingScreen PROC
+	;***********************
+	;CAUTION:	It should be called or after any important working with register. OItherwise, it'll change registers
+	;ARGUMENTS:	NONE
+	;RETURN:	?
+	;***********************
+	
+	mov ecx, 0
+	.WHILE(ecx <= 100)
+		mov dh, CenterY
+		mov dl, CenterX
+		sub dh, 2
+		.IF (ecx == 0)
+			sub dl , 15
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 10)
+			sub dl , 12
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 20)
+			sub dl , 9
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 30)
+			sub dl , 6
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 40)
+			sub dl , 3
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 50)
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 60)
+			add dl , 3
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 70)
+			add dl , 6
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 80)
+			add dl , 9
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 90)
+			add dl , 12
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ELSEIF (ecx == 100)
+			add dl , 15
+			call GotoXY
+			mov edx, OFFSET LoadingScreenBar
+			call WriteString
+		.ENDIF
+		
+
+
+		mov dh, CenterY
+		mov dl, CenterX
+		call GotoXY
+		mov eax, ecx
+		call WriteDec
+		mov eax, '%'
+		call WriteChar
+	
+		.IF(ecx <= 20)
+			mov eax, LENGTHOF LoadingScreenText01
+			sub eax, 1
+			SHR eax, 1
+			mov dh, CenterY
+			mov dl, CenterX
+			add dh, 1
+			sub dl, al
+			call GotoXY
+			mov edx, OFFSET LoadingScreenText01 
+			mov eax, 80
+		.ELSEIF(ecx <= 50)
+			mov eax, LENGTHOF LoadingScreenText02
+			sub eax, 1
+			SHR eax, 1
+			mov dh, CenterY
+			mov dl, CenterX
+			add dh, 1
+			sub dl, al
+			call GotoXY
+			mov edx, OFFSET LoadingScreenText02
+			mov eax, 90
+		.ELSEIF(ecx <=70)
+			mov eax, LENGTHOF LoadingScreenText03
+			sub eax, 1
+			SHR eax, 1
+			mov dh, CenterY
+			mov dl, CenterX
+			add dh, 1
+			sub dl, al
+			call GotoXY
+			mov edx, OFFSET LoadingScreenText03
+			mov eax, 180
+		.ELSEIF(ecx <=93)
+			mov eax, LENGTHOF LoadingScreenText04
+			sub eax, 1
+			SHR eax, 1
+			mov dh, CenterY
+			mov dl, CenterX
+			add dh, 1
+			sub dl, al
+			call GotoXY
+			mov edx, OFFSET LoadingScreenText04
+			mov eax, 150
+		.ELSE
+			mov eax, LENGTHOF LoadingScreenText05
+			sub eax, 1
+			SHR eax, 1
+			mov dh, CenterY
+			mov dl, CenterX
+			add dh, 1
+			sub dl, al
+			call GotoXY
+			mov edx, OFFSET LoadingScreenText05
+			mov eax, 500
+		.ENDIF
+		call WriteString
+		add ecx, 1
+		call Delay
+		;call Clrscr
+	.ENDW
+	ret
+LoadingScreen ENDP
 
 END main
