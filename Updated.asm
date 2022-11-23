@@ -44,7 +44,7 @@ str1 BYTE "Enter -1 when your order is complete", 0
 str2 BYTE "Enter Item Number to place your order: ", 0
 str3 BYTE "		Total Bill:		", 0
 str4 BYTE "			BILL DETAIL", 0
-
+space BYTE "     ", 0
 Order SWORD TotalItems DUP(-1)
 
 .code
@@ -107,15 +107,17 @@ LOCAL i_col : BYTE
 	sub col, 39
 
 	mov esi, 0
-	Breakk:
+	BreakkButUp:
 	mov ax, 1
 	.WHILE(ax != -1 && ax != 0 && ax < 25)
 		mov dh, i_row
 		mov dl, i_col
 		call gotoxy
 		call ReadInt
-		.IF(eax == 0 || eax > 24)
-			jmp Breakk
+		.IF(eax == -1)
+			jmp BreakMeDown
+		.ELSEIF(eax == 0 || eax > 24)
+			jmp BreakkButUp
 		.ENDIF
 		mov Order[esi * TYPE WORD], ax
 		inc row
@@ -123,19 +125,29 @@ LOCAL i_col : BYTE
 		mov dl, col
 		call Gotoxy
 		call WriteDec
-		add col, 5
-		mov dh, row
-		mov dl, col
-		call Gotoxy
+		mov edx, OFFSET space
+		call WriteString
+
+
 		movzx eax, Order[esi * TYPE WORD]
 		dec eax
 		mov edx, items[eax* TYPE DWORD]
 		call WriteString
-		sub col, 5
+		mov edx, OFFSET space
+		call WriteString
+		
+		
+		movzx eax, Order[esi * TYPE WORD]
+		dec eax
+		mov eax, price[eax* TYPE DWORD]
+		call WriteDec
+		mov edx, OFFSET space
+		call WriteString
+		
 		inc esi
 		mov ax, 1
 	.ENDW
-
+	BreakMeDown:
 	ret
 GetOrder ENDP
 
