@@ -20,19 +20,20 @@ item9 BYTE "Chapati", 0
 item10 BYTE "Egg Fried Rice", 0
 item11 BYTE "Chicken Macaroni", 0
 item12 BYTE "Chicken Manchurian", 0
-item13 BYTE "Zinger Burger", 0
-item14 BYTE "Chicken Pizza", 0
-item15 BYTE "Chicken Shawarma", 0
-item16 BYTE "French Fries", 0
-item17 BYTE "Coca Cola", 0
-item18 BYTE "Sprite", 0
-item19 BYTE "Pine Apple Juice", 0
-item20 BYTE "Banana Milkshake", 0
-item21 BYTE "Chocolate Cake", 0
-item22 BYTE "Coconut Cream Pie", 0
-item23 BYTE "Apple Pie", 0
-item24 BYTE "Vanilla Icecream", 0
-items DWORD item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12, item13, item14, item15, item16, item17, item18, item19, item20, item21, item22, item23, item24
+item13 BYTE "Chowmein", 0
+item14 BYTE "Zinger Burger", 0
+item15 BYTE "Chicken Pizza", 0
+item16 BYTE "Chicken Shawarma", 0
+item17 BYTE "French Fries", 0
+item18 BYTE "Coca Cola", 0
+item19 BYTE "Sprite", 0
+item20 BYTE "Pine Apple Juice", 0
+item21 BYTE "Banana Milkshake", 0
+item22 BYTE "Chocolate Cake", 0
+item23 BYTE "Coconut Cream Pie", 0
+item24 BYTE "Apple Pie", 0
+item25 BYTE "Vanilla Icecream", 0
+items DWORD item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12, item13, item14, item15, item16, item17, item18, item19, item20, item21, item22, item23, item24, item25
 price DWORD 100, 150, 600, 900, 1000, 100, 100, 15, 10, 150, 300, 300,  200, 100, 800, 200, 100, 100, 100, 80, 60, 1000, 600, 300, 200
 
 row BYTE 1 
@@ -44,8 +45,11 @@ str1 BYTE "Enter -1 when your order is complete", 0
 str2 BYTE "Enter Item Number to place your order: ", 0
 str3 BYTE "		Total Bill:		", 0
 str4 BYTE "			BILL DETAIL", 0
+str5 BYTE "Enter quantity: ",0
 space BYTE "     ", 0
+
 Order SWORD TotalItems DUP(-1)
+Quantity WORD TotalItems DUP(1)
 
 .code
 main PROC
@@ -107,6 +111,7 @@ LOCAL i_col : BYTE
 	sub col, 39
 
 	mov esi, 0
+	add row, 1
 	BreakkButUp:
 	mov ax, 1
 	.WHILE(ax != -1 && ax != 0 && ax < 25)
@@ -120,10 +125,27 @@ LOCAL i_col : BYTE
 			jmp BreakkButUp
 		.ENDIF
 		mov Order[esi * TYPE WORD], ax
-		inc row
+		
+		inc i_row
+		mov dh, i_row
+		mov dl, col
+		call gotoxy
+		mov edx, OFFSET str5
+		call WriteString
+		call ReadDec
+		.IF(eax == 0)
+			mov eax, 1
+		.ENDIF
+		mov Quantity[esi * TYPE WORD], ax
+		dec i_row
+		mov ax, Quantity[esi * TYPE WORD]
+
+
+		add row,1
 		mov dh, row
 		mov dl, col
 		call Gotoxy
+		movzx eax, Order[esi * TYPE WORD]
 		call WriteDec
 		mov edx, OFFSET space
 		call WriteString
@@ -140,6 +162,11 @@ LOCAL i_col : BYTE
 		movzx eax, Order[esi * TYPE WORD]
 		dec eax
 		mov eax, price[eax* TYPE DWORD]
+		call WriteDec
+		mov edx, OFFSET space
+		call WriteString
+
+		movzx eax, Quantity[esi * TYPE WORD]
 		call WriteDec
 		mov edx, OFFSET space
 		call WriteString
