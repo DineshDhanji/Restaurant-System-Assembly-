@@ -22,22 +22,22 @@
 |                                                              |
 |                            FAST FOOD                         |
 |                                                              |
-|  13-      Zinger Burger                Rs: 100/Burger        |
-|  14-      Chicken Pizza                Rs: 800/Pizza         |
-|  15-      Chicken Shawarma             Rs: 200/Shawarma      |
-|  16-      French Fries                 Rs: 100/Box           |
+|  14-      Zinger Burger                Rs: 100/Burger        |
+|  15-      Chicken Pizza                Rs: 800/Pizza         |
+|  16-      Chicken Shawarma             Rs: 200/Shawarma      |
+|  17-      French Fries                 Rs: 100/Box           |
 |                                                              |
 |                             DRINKS                           |
 |                                                              |
-|  17-      Coca Cola                    Rs: 100/Litre         |
-|  18-      Sprite                       Rs: 100/Litre         |
-|  19-      Pine Apple Juice             Rs: 80/Glass          |
-|  20-      Banana MilkShake             Rs: 60/Glass          |
+|  18-      Coca Cola                    Rs: 100/Litre         |
+|  19-      Sprite                       Rs: 100/Litre         |
+|  20-      Pine Apple Juice             Rs: 80/Glass          |
+|  21-      Banana MilkShake             Rs: 60/Glass          |
 |                                                              |
 |                             DESSERT                          |
 |                                                              |
-|  21-      Chocolate Cake               Rs: 1000              |
-|  22-      Coconut Cream Pie            Rs: 600               |
-|  23-      Apple Pie                    Rs: 300               |
-|  24-      Vanilla Icecream             Rs: 200/Cup           |
+|  22-      Chocolate Cake               Rs: 1000              |
+|  23-      Coconut Cream Pie            Rs: 600               |
+|  24-      Apple Pie                    Rs: 300               |
+|  25-      Vanilla Icecream             Rs: 200/Cup           |
  --------------------------------------------------------------
