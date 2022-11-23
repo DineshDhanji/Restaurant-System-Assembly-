@@ -218,6 +218,8 @@ LOCAL i_col : BYTE
 GetOrder ENDP
 
 GeneratingBill PROC
+	mov eax, white*(16+black)
+	call SetTextColor
 	call ReadMyScreenDetails
 	call clrscr
 	;call LoadingScreen
